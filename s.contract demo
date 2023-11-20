@@ -1,0 +1,58 @@
+ragma solidity ^0.8.0;
+
+contract InsurancePolicy {
+
+// Address of the policyholder
+address payable public policyholder;
+
+// Address of the insurance company
+address payable public insuranceCompany;
+
+// Policy start date
+uint256 public policyStartDate;
+
+// Policy end date
+uint256 public policyEndDate;
+
+// Premium amount
+uint256 public premiumAmount;
+
+// Covered event
+string public coveredEvent;
+
+// Constructor
+constructor(
+    address payable _policyholder,
+    address payable _insuranceCompany,
+    uint256 _premiumAmount,
+    string memory _coveredEvent
+) {
+    policyholder = _policyholder;
+    insuranceCompany = _insuranceCompany;
+    premiumAmount = _premiumAmount;
+    coveredEvent = _coveredEvent;
+
+    // Set the policy start date to the current timestamp
+    policyStartDate = block.timestamp;
+
+    // Set the policy end date to 5 years from the start date
+    policyEndDate = block.timestamp + 5 years;
+}
+
+// Function to pay the premium
+function payPremium() public payable {
+    require(msg.value == premiumAmount, "Premium amount must be equal to the specified amount");
+
+    // Transfer the premium amount to the insurance company
+    insuranceCompany.transfer(premiumAmount);
+}
+
+// Function to file a claim
+function fileClaim(string memory _eventDescription) public {
+    require(block.timestamp <= policyEndDate, "Policy has expired");
+    require(keccak256(abi.encodePacked(_eventDescription)) == keccak256(abi.encodePacked(coveredEvent)), "Event does not match the covered event");
+
+    // Transfer the payout amount to the policyholder
+    policyholder.transfer(premiumAmount);
+}
+}
